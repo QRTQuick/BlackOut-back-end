@@ -2,12 +2,27 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from app.api.convert import router
 from app.services.temp_manager import init_db, get_temp
+from app.services.keep_alive import keep_alive_service
 import time, os
+import asyncio
 
 app = FastAPI(title="NodeBlack")
 
 init_db()
 app.include_router(router, prefix="/api")
+
+@app.on_event("startup")
+async def startup_event():
+    """Start keep-alive service when app starts"""
+    # Set the URL to your Render deployment URL
+    render_url = os.getenv("RENDER_URL", "http://127.0.0.1:8000")  # Default to localhost for development
+    keep_alive_service.url = render_url
+    keep_alive_service.start()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Stop keep-alive service when app shuts down"""
+    keep_alive_service.stop()
 
 @app.get("/api/files")
 def list_files():
@@ -36,6 +51,15 @@ def list_files():
         })
     
     return {"files": files, "total": len(files)}
+
+@app.get("/api/ping")
+def ping_endpoint():
+    """Keep-alive ping endpoint"""
+    return {
+        "status": "alive",
+        "timestamp": int(time.time()),
+        "message": "Server is awake"
+    }
 
 @app.get("/api/test")
 def test_endpoint():

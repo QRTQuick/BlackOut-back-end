@@ -6,3 +6,4 @@ pdf2docx
 python-docx
 firebase-admin
 python-dotenv
+aiohttp
