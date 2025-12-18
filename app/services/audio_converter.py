@@ -1,4 +1,8 @@
-from pydub import AudioSegment
+try:
+    from pydub import AudioSegment
+    PYDUB_AVAILABLE = True
+except ImportError:
+    PYDUB_AVAILABLE = False
 import os
 
 def convert_audio(input_path, output_path, target_format):

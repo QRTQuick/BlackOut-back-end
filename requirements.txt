@@ -7,9 +7,7 @@ python-docx
 firebase-admin
 python-dotenv
 aiohttp
-pydub
 openpyxl
 pandas
 python-pptx
 xlsxwriter
-moviepy
