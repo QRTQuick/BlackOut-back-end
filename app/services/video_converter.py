@@ -1,8 +1,18 @@
-from moviepy.editor import VideoFileClip
 import os
+
+# Try to import moviepy, but make it optional
+try:
+    from moviepy.editor import VideoFileClip
+    VIDEO_CONVERSION_AVAILABLE = True
+except ImportError:
+    VIDEO_CONVERSION_AVAILABLE = False
+    VideoFileClip = None
 
 def convert_video(input_path, output_path, target_format):
     """Convert video files between different formats"""
+    if not VIDEO_CONVERSION_AVAILABLE:
+        raise Exception("Video conversion not available - missing system dependencies (ffmpeg)")
+    
     try:
         # Load video
         video = VideoFileClip(input_path)
@@ -29,6 +39,9 @@ def convert_video(input_path, output_path, target_format):
 
 def extract_audio_from_video(input_path, output_path):
     """Extract audio from video file"""
+    if not VIDEO_CONVERSION_AVAILABLE:
+        raise Exception("Video processing not available - missing system dependencies")
+    
     try:
         video = VideoFileClip(input_path)
         audio = video.audio
@@ -46,6 +59,9 @@ def extract_audio_from_video(input_path, output_path):
 
 def get_video_info(input_path):
     """Get video file information"""
+    if not VIDEO_CONVERSION_AVAILABLE:
+        return {"error": "Video processing not available"}
+    
     try:
         video = VideoFileClip(input_path)
         info = {
@@ -58,3 +74,7 @@ def get_video_info(input_path):
         return info
     except Exception as e:
         return {"error": str(e)}
+
+def is_video_conversion_available():
+    """Check if video conversion is available"""
+    return VIDEO_CONVERSION_AVAILABLE

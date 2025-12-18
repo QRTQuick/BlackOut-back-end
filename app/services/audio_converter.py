@@ -1,12 +1,18 @@
+import os
+
+# Try to import pydub, but make it optional
 try:
     from pydub import AudioSegment
-    PYDUB_AVAILABLE = True
+    AUDIO_CONVERSION_AVAILABLE = True
 except ImportError:
-    PYDUB_AVAILABLE = False
-import os
+    AUDIO_CONVERSION_AVAILABLE = False
+    AudioSegment = None
 
 def convert_audio(input_path, output_path, target_format):
     """Convert audio files between different formats"""
+    if not AUDIO_CONVERSION_AVAILABLE:
+        raise Exception("Audio conversion not available - missing system dependencies (ffmpeg)")
+    
     try:
         # Load audio file
         audio = AudioSegment.from_file(input_path)
@@ -32,6 +38,9 @@ def convert_audio(input_path, output_path, target_format):
 
 def get_audio_info(input_path):
     """Get audio file information"""
+    if not AUDIO_CONVERSION_AVAILABLE:
+        return {"error": "Audio processing not available"}
+    
     try:
         audio = AudioSegment.from_file(input_path)
         return {
@@ -42,3 +51,7 @@ def get_audio_info(input_path):
         }
     except Exception as e:
         return {"error": str(e)}
+
+def is_audio_conversion_available():
+    """Check if audio conversion is available"""
+    return AUDIO_CONVERSION_AVAILABLE

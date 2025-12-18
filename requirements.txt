@@ -11,3 +11,5 @@ openpyxl
 pandas
 python-pptx
 xlsxwriter
+pydub
+moviepy

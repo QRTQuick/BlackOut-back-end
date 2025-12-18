@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeBlack API - Universal File Converter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #00ff41;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .terminal-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .terminal-header {
+            background: #1e1e1e;
+            border: 2px solid #00ff41;
+            border-radius: 10px 10px 0 0;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .btn.close { background: #ff5f56; }
+        .btn.minimize { background: #ffbd2e; }
+        .btn.maximize { background: #27ca3f; }
+
+        .terminal-title {
+            margin-left: 15px;
+            font-weight: bold;
+            color: #00ff41;
+        }
+
+        .terminal-body {
+            background: #0a0a0a;
+            border: 2px solid #00ff41;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            position: relative;
+        }
+
+        .ascii-art {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ff41;
+            font-size: 12px;
+            line-height: 1.2;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .welcome-text h1 {
+            color: #00ff41;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.7);
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1a1a;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff41;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .api-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #00ff41;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #00ff41;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .endpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .endpoint-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .endpoint-card:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .method-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .method-get { background: #28a745; color: white; }
+        .method-post { background: #007bff; color: white; }
+
+        .endpoint-path {
+            color: #00ff41;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .endpoint-description {
+            color: #cccccc;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .code-block {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block pre {
+            color: #00ff41;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            border: none;
+            color: #00ff41;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #555;
+        }
+
+        .formats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .format-category {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .format-category h4 {
+            color: #00ff41;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .format-list {
+            color: #cccccc;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        .footer a {
+            color: #00ff41;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ffffff;
+        }
+
+        .typing-animation {
+            overflow: hidden;
+            border-right: 2px solid #00ff41;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #00ff41; }
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        @media (max-width: 768px) {
+            .terminal-container {
+                padding: 10px;
+            }
+            
+            .endpoint-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ascii-art {
+                font-size: 8px;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-bg" id="matrix"></canvas>
+    
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <div class="btn close"></div>
+                <div class="btn minimize"></div>
+                <div class="btn maximize"></div>
+            </div>
+            <div class="terminal-title">NodeBlack API Terminal v2.0</div>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="ascii-art">
+<pre>
+███╗   ██╗ ██████╗ ██████╗ ███████╗██████╗ ██╗      █████╗  ██████╗██╗  ██╗
+████╗  ██║██╔═══██╗██╔══██╗██╔════╝██╔══██╗██║     ██╔══██╗██╔════╝██║ ██╔╝
+██╔██╗ ██║██║   ██║██║  ██║█████╗  ██████╔╝██║     ███████║██║     █████╔╝ 
+██║╚██╗██║██║   ██║██║  ██║██╔══╝  ██╔══██╗██║     ██╔══██║██║     ██╔═██╗ 
+██║ ╚████║╚██████╔╝██████╔╝███████╗██████╔╝███████╗██║  ██║╚██████╗██║  ██╗
+╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+</pre>
+            </div>
+            
+            <div class="welcome-text">
+                <h1 class="typing-animation">Universal File Converter API</h1>
+                <p>Transform any file format with lightning speed ⚡</p>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span>API Status: <strong>ONLINE</strong></span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-server"></i>
+                    <span>Server: <strong>nodeblack.onrender.com</strong></span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-code"></i>
+                    <span>Version: <strong>2.0</strong></span>
+                </div>
+            </div>
+
+            <!-- API Endpoints Section -->
+            <div class="api-section">
+                <h2 class="section-title">
+                    <i class="fas fa-terminal"></i>
+                    API Endpoints
+                </h2>
+                
+                <div class="endpoint-grid">
+                    <!-- Convert File -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-post">POST</span>
+                            <span class="endpoint-path">/api/convert</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Convert files between 50+ formats. Upload any supported file and specify target format.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl -X POST "https://nodeblack.onrender.com/api/convert?target_format=jpg" \
+  -H "X-API-Key: blackout-secret-key" \
+  -F "file=@image.png"</pre>
+                        </div>
+                    </div>
+
+                    <!-- Download File -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/api/download/{task_id}</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Download converted file using task ID. Files expire after 10 minutes.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl -O "https://nodeblack.onrender.com/api/download/abc123-def456"</pre>
+                        </div>
+                    </div>
+
+                    <!-- Check Status -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/api/status/{task_id}</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Check conversion status. Returns processing, ready, failed, or expired.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl "https://nodeblack.onrender.com/api/status/abc123-def456"</pre>
+                        </div>
+                    </div>
+
+                    <!-- List Files -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/api/files</span>
+                        </div>
+                        <div class="endpoint-description">
+                            List all converted files in database with status and download URLs.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl "https://nodeblack.onrender.com/api/files"</pre>
+                        </div>
+                    </div>
+
+                    <!-- Supported Formats -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/api/formats</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Get all supported file formats and available conversions.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl "https://nodeblack.onrender.com/api/formats"</pre>
+                        </div>
+                    </div>
+
+                    <!-- Health Check -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/api/test</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Health check endpoint. Verify API is running and storage is accessible.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl "https://nodeblack.onrender.com/api/test"</pre>
+                        </div>
+                    </div>
+
+                    <!-- Keep Alive -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/api/ping</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Keep-alive ping endpoint. Used internally to prevent server sleep.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>curl "https://nodeblack.onrender.com/api/ping"</pre>
+                        </div>
+                    </div>
+
+                    <!-- API Documentation -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="endpoint-path">/docs</span>
+                        </div>
+                        <div class="endpoint-description">
+                            Interactive API documentation with Swagger UI. Test endpoints directly.
+                        </div>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <pre>https://nodeblack.onrender.com/docs</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supported Formats Section -->
+            <div class="api-section">
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt"></i>
+                    Supported File Formats
+                </h2>
+                
+                <div class="formats-grid">
+                    <div class="format-category">
+                        <h4><i class="fas fa-image"></i> Images</h4>
+                        <div class="format-list">PNG, JPG, JPEG, WEBP, BMP, TIFF, GIF</div>
+                    </div>
+                    
+                    <div class="format-category">
+                        <h4><i class="fas fa-music"></i> Audio</h4>
+                        <div class="format-list">MP3, WAV, OGG, FLAC, AAC, M4A</div>
+                    </div>
+                    
+                    <div class="format-category">
+                        <h4><i class="fas fa-video"></i> Video</h4>
+                        <div class="format-list">MP4, AVI, MOV, WEBM, MKV, FLV</div>
+                    </div>
+                    
+                    <div class="format-category">
+                        <h4><i class="fas fa-file-word"></i> Documents</h4>
+                        <div class="format-list">PDF, DOCX, TXT, PPTX</div>
+                    </div>
+                    
+                    <div class="format-category">
+                        <h4><i class="fas fa-table"></i> Spreadsheets</h4>
+                        <div class="format-list">CSV, XLSX, XLS, JSON, HTML</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication Section -->
+            <div class="api-section">
+                <h2 class="section-title">
+                    <i class="fas fa-key"></i>
+                    Authentication
+                </h2>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-description">
+                        All API requests require authentication using the API key header:
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre>X-API-Key: blackout-secret-key</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>
+                    <i class="fas fa-code"></i> 
+                    Built with FastAPI | 
+                    <a href="https://nodeblack.onrender.com/docs" target="_blank">
+                        <i class="fas fa-book"></i> API Docs
+                    </a> | 
+                    <a href="/frontend/" target="_blank">
+                        <i class="fas fa-desktop"></i> Web Interface
+                    </a>
+                </p>
+                <p style="margin-top: 10px; color: #444;">
+                    © 2024 NodeBlack API - Universal File Conversion Service
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 35);
+
+        // Copy code functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalIcon = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalIcon;
+                    button.style.background = '#333';
+                }, 2000);
+            });
+        }
+
+        // Resize canvas on window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // API status check
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch('https://nodeblack.onrender.com/api/test');
+                const data = await response.json();
+                
+                if (data.status === 'working') {
+                    console.log('✅ API is online and working');
+                }
+            } catch (error) {
+                console.log('❌ API connection failed');
+            }
+        }
+
+        // Check API status on load
+        checkAPIStatus();
+    </script>
+</body>
+</html>
