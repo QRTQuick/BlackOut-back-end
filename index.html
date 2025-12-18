@@ -72,10 +72,48 @@
         .ascii-art {
             text-align: center;
             margin-bottom: 30px;
-            color: #00ff41;
-            font-size: 12px;
-            line-height: 1.2;
+            font-size: 11px;
+            line-height: 1.1;
+            font-weight: bold;
             text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Terminal Colors */
+        .red { 
+            color: #ff4444; 
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.7);
+        }
+        .green { 
+            color: #44ff44; 
+            text-shadow: 0 0 10px rgba(68, 255, 68, 0.7);
+        }
+        .blue { 
+            color: #4488ff; 
+            text-shadow: 0 0 10px rgba(68, 136, 255, 0.7);
+        }
+        .yellow { 
+            color: #ffff44; 
+            text-shadow: 0 0 10px rgba(255, 255, 68, 0.7);
+        }
+        .purple { 
+            color: #ff44ff; 
+            text-shadow: 0 0 10px rgba(255, 68, 255, 0.7);
+        }
+        .cyan { 
+            color: #44ffff; 
+            text-shadow: 0 0 10px rgba(68, 255, 255, 0.7);
+        }
+        .rainbow {
+            background: linear-gradient(45deg, #ff4444, #ffff44, #44ff44, #44ffff, #4488ff, #ff44ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes rainbow-glow {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(360deg) brightness(1.2); }
         }
 
         .welcome-text {
@@ -331,12 +369,14 @@
         <div class="terminal-body">
             <div class="ascii-art">
 <pre>
-███╗   ██╗ ██████╗ ██████╗ ███████╗██████╗ ██╗      █████╗  ██████╗██╗  ██╗
-████╗  ██║██╔═══██╗██╔══██╗██╔════╝██╔══██╗██║     ██╔══██╗██╔════╝██║ ██╔╝
-██╔██╗ ██║██║   ██║██║  ██║█████╗  ██████╔╝██║     ███████║██║     █████╔╝ 
-██║╚██╗██║██║   ██║██║  ██║██╔══╝  ██╔══██╗██║     ██╔══██║██║     ██╔═██╗ 
-██║ ╚████║╚██████╔╝██████╔╝███████╗██████╔╝███████╗██║  ██║╚██████╗██║  ██╗
-╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+    _   __          __     ____  __           __  
+   / | / /___  ____/ /__  / __ )/ /___ ______/ /__
+  /  |/ / __ \/ __  / _ \/ __  / / __ `/ ___/ //_/
+ / /|  / /_/ / /_/ /  __/ /_/ / / /_/ / /__/ ,&lt;   
+/_/ |_/\____/\__,_/\___/_____/_/\__,_/\___/_/|_|
+                                                  
+
+<span class="rainbow">⚡ UNIVERSAL FILE CONVERTER API ⚡</span>
 </pre>
             </div>
             

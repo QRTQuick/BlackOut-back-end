@@ -26,21 +26,27 @@ except:
 
 @app.get("/", response_class=HTMLResponse)
 async def landing_page():
-    """Serve the developer landing page"""
-    # Try multiple possible locations for index.html
+    """Serve the developer landing page - First thing users see!"""
+    # Priority order: Try to find your custom index.html first
     possible_paths = [
-        "index.html",
-        "../index.html",
-        "/opt/render/project/src/index.html",
-        os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html")
+        "index.html",  # Root directory (highest priority)
+        "../index.html",  # Parent directory
+        "/opt/render/project/src/index.html",  # Render deployment path
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html"),  # Relative to app
+        "./index.html",  # Current working directory
+        os.path.join(os.getcwd(), "index.html")  # Absolute current directory
     ]
     
-    for path in possible_paths:
+    print(f"🔍 Looking for index.html in these locations:")
+    for i, path in enumerate(possible_paths, 1):
+        print(f"  {i}. {path} - {'✅ Found' if os.path.exists(path) else '❌ Not found'}")
         try:
             if os.path.exists(path):
+                print(f"📄 Serving index.html from: {path}")
                 with open(path, "r", encoding="utf-8") as f:
                     return HTMLResponse(content=f.read())
-        except:
+        except Exception as e:
+            print(f"❌ Error reading {path}: {e}")
             continue
     
     # Fallback: Return inline HTML if file not found
@@ -140,10 +146,19 @@ async def landing_page():
 </head>
 <body>
     <div class="container">
-        <h1>🚀 NodeBlack API</h1>
-        <p style="text-align: center; color: #cccccc; margin-bottom: 30px;">
-            Universal File Converter - Transform any file format with lightning speed
-        </p>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <pre style="font-size: 14px; line-height: 1.2; font-weight: bold; margin: 0; color: #00ff41; text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);">
+    _   __          __     ____  __           __  
+   / | / /___  ____/ /__  / __ )/ /___ ______/ /__
+  /  |/ / __ \/ __  / _ \/ __  / / __ `/ ___/ //_/
+ / /|  / /_/ / /_/ /  __/ /_/ / / /_/ / /__/ ,&lt;   
+/_/ |_/\____/\__,_/\___/_____/_/\__,_/\___/_/|_|
+
+            </pre>
+            <h2 style="background: linear-gradient(45deg, #ff4444, #ffff44, #44ff44, #44ffff, #4488ff, #ff44ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 20px 0;">
+                ⚡ UNIVERSAL FILE CONVERTER API ⚡
+            </h2>
+        </div>
         
         <div class="status">
             <div class="status-item">
@@ -157,7 +172,7 @@ async def landing_page():
                 <strong>Version:</strong> 2.0.0
             </div>
             <div class="status-item">
-                <strong>Keep-Alive:</strong> <span style="color: #00ff41;">Active (3min intervals)</span>
+                <strong>Keep-Alive:</strong> <span style="color: #00ff41;">Active (5sec intervals)</span>
             </div>
         </div>
         
@@ -200,6 +215,16 @@ curl -X POST "https://nodeblack.onrender.com/api/convert?target_format=jpg" \\<b
 </body>
 </html>
     """, status_code=200)
+
+@app.get("/home", response_class=HTMLResponse)
+async def home_redirect():
+    """Alternative home route - redirects to main landing page"""
+    return await landing_page()
+
+@app.get("/landing", response_class=HTMLResponse) 
+async def landing_redirect():
+    """Alternative landing route - redirects to main landing page"""
+    return await landing_page()
 
 @app.on_event("startup")
 async def startup_event():

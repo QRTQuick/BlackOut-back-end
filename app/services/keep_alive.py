@@ -6,7 +6,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 class KeepAliveService:
-    def __init__(self, url: str = None, interval: int = 180):  # 3 minutes = 180 seconds
+    def __init__(self, url: str = None, interval: int = 5):  # 5 seconds for aggressive keep-alive
         self.url = url or "https://nodeblack.onrender.com"
         self.interval = interval
         self.running = False
@@ -27,7 +27,7 @@ class KeepAliveService:
     async def start_keep_alive(self):
         """Start the keep-alive loop"""
         self.running = True
-        logger.info(f"🚀 Keep-alive service started - pinging every {self.interval} seconds")
+        logger.info(f"🚀 Keep-alive service started - pinging every {self.interval} seconds (aggressive mode)")
         
         while self.running:
             await asyncio.sleep(self.interval)
