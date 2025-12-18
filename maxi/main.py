@@ -17,7 +17,7 @@ class ConversionWorker(QThread):
         super().__init__()
         self.file_path = file_path
         self.target_format = target_format
-        self.api_url = "http://127.0.0.1:8000"
+        self.api_url = "https://nodeblack.onrender.com"
         self.api_key = "blackout-secret-key"
     
     def run(self):
@@ -129,7 +129,16 @@ class NodeBlackTester(QMainWindow):
         # Format selection
         format_layout = QHBoxLayout()
         self.format_combo = QComboBox()
-        self.format_combo.addItems(["png", "jpg", "jpeg", "webp", "docx"])
+        # Add all supported formats
+        formats = [
+            "png", "jpg", "jpeg", "webp", "bmp", "tiff",  # Images
+            "docx", "txt",  # Documents
+            "mp3", "wav", "ogg", "flac", "aac", "m4a",  # Audio
+            "csv", "xlsx", "xls", "json", "html",  # Spreadsheets
+            "pptx",  # Presentations
+            "mp4", "avi", "mov", "webm", "gif"  # Video
+        ]
+        self.format_combo.addItems(formats)
         
         format_layout.addWidget(QLabel("Target Format:"))
         format_layout.addWidget(self.format_combo)
@@ -192,7 +201,7 @@ class NodeBlackTester(QMainWindow):
     
     def test_connection(self):
         try:
-            response = requests.get("http://127.0.0.1:8000/api/test", timeout=5)
+            response = requests.get("https://nodeblack.onrender.com/api/test", timeout=5)
             if response.status_code == 200:
                 self.connection_status.setText("✅ Connected")
                 self.connection_status.setStyleSheet("color: green")
@@ -212,7 +221,13 @@ class NodeBlackTester(QMainWindow):
             self, 
             "Select File", 
             "", 
-            "Images (*.png *.jpg *.jpeg *.webp);;Documents (*.pdf *.txt);;All Files (*)"
+            "Images (*.png *.jpg *.jpeg *.webp *.bmp *.tiff *.gif);;"
+            "Documents (*.pdf *.txt *.docx);;"
+            "Audio (*.mp3 *.wav *.ogg *.flac *.aac *.m4a *.wma);;"
+            "Spreadsheets (*.csv *.xlsx *.xls);;"
+            "Presentations (*.pptx);;"
+            "Video (*.mp4 *.avi *.mov *.webm *.mkv *.flv);;"
+            "All Files (*)"
         )
         
         if file_path:
@@ -251,7 +266,7 @@ class NodeBlackTester(QMainWindow):
     
     def refresh_files(self):
         try:
-            response = requests.get("http://127.0.0.1:8000/api/files")
+            response = requests.get("https://nodeblack.onrender.com/api/files")
             if response.status_code == 200:
                 data = response.json()
                 self.files_list.clear()
@@ -291,7 +306,7 @@ class NodeBlackTester(QMainWindow):
         
         if save_path:
             try:
-                response = requests.get(f"http://127.0.0.1:8000/api/download/{file_info['task_id']}")
+                response = requests.get(f"https://nodeblack.onrender.com/api/download/{file_info['task_id']}")
                 if response.status_code == 200:
                     with open(save_path, 'wb') as f:
                         f.write(response.content)

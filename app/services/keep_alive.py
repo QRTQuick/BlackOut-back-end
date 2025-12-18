@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class KeepAliveService:
     def __init__(self, url: str = None, interval: int = 180):  # 3 minutes = 180 seconds
-        self.url = url or "https://your-app-name.onrender.com"  # Replace with your Render URL
+        self.url = url or "https://nodeblack.onrender.com"
         self.interval = interval
         self.running = False
         self.task = None

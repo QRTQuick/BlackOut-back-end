@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeBlack - Universal File Converter</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-exchange-alt"></i>
+                <h1>NodeBlack</h1>
+            </div>
+            <p class="tagline">Universal File Converter - Transform Any File Format</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop your file here or click to browse</h3>
+                    <p>Supports 50+ file formats including images, audio, video, documents & more</p>
+                    <input type="file" id="fileInput" accept="*/*" hidden>
+                    <button class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-folder-open"></i> Browse Files
+                    </button>
+                </div>
+            </section>
+
+            <!-- File Info Section -->
+            <section class="file-info" id="fileInfo" style="display: none;">
+                <div class="file-card">
+                    <div class="file-icon">
+                        <i class="fas fa-file" id="fileIcon"></i>
+                    </div>
+                    <div class="file-details">
+                        <h4 id="fileName">No file selected</h4>
+                        <p id="fileSize">0 KB</p>
+                        <p id="fileType">Unknown type</p>
+                    </div>
+                    <button class="remove-btn" onclick="removeFile()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Format Selection -->
+            <section class="format-section" id="formatSection" style="display: none;">
+                <h3><i class="fas fa-cogs"></i> Choose Output Format</h3>
+                <div class="format-grid" id="formatGrid">
+                    <!-- Formats will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Convert Button -->
+            <section class="convert-section" id="convertSection" style="display: none;">
+                <button class="convert-btn" id="convertBtn" onclick="convertFile()">
+                    <i class="fas fa-magic"></i> Convert File
+                </button>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <div class="progress-card">
+                    <h3><i class="fas fa-spinner fa-spin"></i> Converting...</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Uploading file...</p>
+                </div>
+            </section>
+
+            <!-- Result Section -->
+            <section class="result-section" id="resultSection" style="display: none;">
+                <div class="result-card success" id="resultCard">
+                    <div class="result-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Conversion Complete!</h3>
+                    <p>Your file has been successfully converted.</p>
+                    <button class="download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i> Download File
+                    </button>
+                    <button class="new-conversion-btn" onclick="resetForm()">
+                        <i class="fas fa-plus"></i> Convert Another File
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Supported Formats -->
+        <section class="supported-formats">
+            <h3><i class="fas fa-list"></i> Supported Formats</h3>
+            <div class="format-categories">
+                <div class="category">
+                    <h4><i class="fas fa-image"></i> Images</h4>
+                    <p>PNG, JPG, JPEG, WEBP, BMP, TIFF, GIF</p>
+                </div>
+                <div class="category">
+                    <h4><i class="fas fa-music"></i> Audio</h4>
+                    <p>MP3, WAV, OGG, FLAC, AAC, M4A</p>
+                </div>
+                <div class="category">
+                    <h4><i class="fas fa-video"></i> Video</h4>
+                    <p>MP4, AVI, MOV, WEBM, MKV, FLV</p>
+                </div>
+                <div class="category">
+                    <h4><i class="fas fa-file-alt"></i> Documents</h4>
+                    <p>PDF, DOCX, TXT, PPTX</p>
+                </div>
+                <div class="category">
+                    <h4><i class="fas fa-table"></i> Spreadsheets</h4>
+                    <p>CSV, XLSX, XLS, JSON, HTML</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 NodeBlack. Universal file conversion made simple.</p>
+            <div class="api-info">
+                <a href="https://nodeblack.onrender.com/docs" target="_blank">
+                    <i class="fas fa-code"></i> API Documentation
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

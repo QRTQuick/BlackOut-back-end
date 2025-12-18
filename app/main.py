@@ -113,12 +113,38 @@ def download(task_id: str):
     
     # Set proper media type based on extension
     media_type_map = {
+        # Images
         '.png': 'image/png',
         '.jpg': 'image/jpeg', 
         '.jpeg': 'image/jpeg',
         '.webp': 'image/webp',
+        '.bmp': 'image/bmp',
+        '.tiff': 'image/tiff',
+        '.gif': 'image/gif',
+        # Documents
         '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        '.pdf': 'application/pdf'
+        '.pdf': 'application/pdf',
+        '.txt': 'text/plain',
+        # Audio
+        '.mp3': 'audio/mpeg',
+        '.wav': 'audio/wav',
+        '.ogg': 'audio/ogg',
+        '.flac': 'audio/flac',
+        '.aac': 'audio/aac',
+        '.m4a': 'audio/mp4',
+        # Spreadsheets
+        '.csv': 'text/csv',
+        '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        '.xls': 'application/vnd.ms-excel',
+        '.json': 'application/json',
+        '.html': 'text/html',
+        # Presentations
+        '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        # Video
+        '.mp4': 'video/mp4',
+        '.avi': 'video/x-msvideo',
+        '.mov': 'video/quicktime',
+        '.webm': 'video/webm'
     }
     
     media_type = media_type_map.get(file_ext.lower(), 'application/octet-stream')
