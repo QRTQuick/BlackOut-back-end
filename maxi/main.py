@@ -6,12 +6,12 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout,
                                QHBoxLayout, QWidget, QPushButton, QLabel, 
                                QFileDialog, QComboBox, QTextEdit, QProgressBar,
                                QListWidget, QMessageBox, QGroupBox)
-from PySide6.QtCore import QThread, QSignal, Qt
+from PySide6.QtCore import QThread, Signal, Qt
 from PySide6.QtGui import QPixmap, QFont
 
 class ConversionWorker(QThread):
-    progress = QSignal(str)
-    finished = QSignal(str, bool)
+    progress = Signal(str)
+    finished = Signal(str, bool)
     
     def __init__(self, file_path, target_format):
         super().__init__()
