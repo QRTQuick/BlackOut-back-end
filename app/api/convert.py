@@ -79,10 +79,11 @@ async def convert_file(
             
             # Audio conversions
             elif file_ext in ["mp3", "wav", "ogg", "flac", "aac", "m4a", "wma"]:
+                print("🎵 Processing audio conversion")
                 if AUDIO_AVAILABLE:
                     convert_audio(input_path, output_path, target_format)
                 else:
-                    raise ValueError("Audio conversion not available on this server")
+                    raise ValueError(f"Audio conversion not available on this server. Supported conversions: Images (PNG↔JPG↔WEBP), Documents (PDF→DOCX, TXT→DOCX/PPTX, DOCX→TXT/PPTX), Spreadsheets (CSV↔XLSX↔JSON), Presentations (PPTX↔TXT)")
             
             # Spreadsheet conversions
             elif file_ext in ["csv", "xlsx", "xls"] and target_format.lower() in ["csv", "xlsx", "xls", "json", "html"]:
@@ -96,6 +97,7 @@ async def convert_file(
             
             # Video conversions
             elif file_ext in ["mp4", "avi", "mov", "webm", "mkv", "flv"]:
+                print("🎬 Processing video conversion")
                 if VIDEO_AVAILABLE:
                     if target_format.lower() in ["mp4", "avi", "mov", "webm", "gif"]:
                         convert_video(input_path, output_path, target_format)
@@ -105,7 +107,7 @@ async def convert_file(
                     else:
                         raise ValueError(f"Unsupported video conversion: {file_ext} -> {target_format}")
                 else:
-                    raise ValueError("Video conversion not available on this server")
+                    raise ValueError(f"Video conversion not available on this server. Supported conversions: Images (PNG↔JPG↔WEBP), Documents (PDF→DOCX, TXT→DOCX/PPTX, DOCX→TXT/PPTX), Spreadsheets (CSV↔XLSX↔JSON), Presentations (PPTX↔TXT)")
             
             else:
                 raise ValueError(f"Unsupported conversion: {file_ext} -> {target_format}")
@@ -184,6 +186,12 @@ def get_supported_formats():
             "output_formats": ["mp3", "wav", "ogg", "flac", "aac", "m4a"]
         }
         formats["examples"]["audio"] = "MP3 to WAV, FLAC to MP3"
+    else:
+        formats["unavailable_conversions"] = formats.get("unavailable_conversions", {})
+        formats["unavailable_conversions"]["audio"] = {
+            "reason": "Missing system dependencies (ffmpeg)",
+            "formats": ["mp3", "wav", "ogg", "flac", "aac", "m4a"]
+        }
     
     if VIDEO_AVAILABLE:
         formats["supported_conversions"]["video"] = {
@@ -193,6 +201,12 @@ def get_supported_formats():
         }
         formats["examples"]["video"] = "MP4 to GIF, AVI to MP4"
         formats["examples"]["video_audio"] = "MP4 to MP3 (extract audio)"
+    else:
+        formats["unavailable_conversions"] = formats.get("unavailable_conversions", {})
+        formats["unavailable_conversions"]["video"] = {
+            "reason": "Missing system dependencies (ffmpeg)",
+            "formats": ["mp4", "avi", "mov", "webm", "mkv", "flv"]
+        }
     
     return formats
 
@@ -211,3 +225,45 @@ def test_docx_conversion():
             "status": "error", 
             "message": f"DOCX conversion import failed: {str(e)}"
         }
+
+@router.get("/system-info")
+def get_system_info():
+    """Get information about available system dependencies and conversions"""
+    import subprocess
+    import sys
+    
+    system_info = {
+        "python_version": sys.version,
+        "available_conversions": {
+            "images": True,  # Always available (Pillow)
+            "documents": True,  # Always available (python-docx, pdf2docx)
+            "spreadsheets": True,  # Always available (pandas, openpyxl)
+            "presentations": True,  # Always available (python-pptx)
+            "audio": AUDIO_AVAILABLE,
+            "video": VIDEO_AVAILABLE
+        },
+        "system_dependencies": {}
+    }
+    
+    # Check for ffmpeg
+    try:
+        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True, timeout=5)
+        system_info["system_dependencies"]["ffmpeg"] = {
+            "available": result.returncode == 0,
+            "version": result.stdout.split('\n')[0] if result.returncode == 0 else None
+        }
+    except:
+        system_info["system_dependencies"]["ffmpeg"] = {"available": False, "error": "Not found or timeout"}
+    
+    # Check for other tools
+    for tool in ['python3', 'pip']:
+        try:
+            result = subprocess.run([tool, '--version'], capture_output=True, text=True, timeout=5)
+            system_info["system_dependencies"][tool] = {
+                "available": result.returncode == 0,
+                "version": result.stdout.strip() if result.returncode == 0 else None
+            }
+        except:
+            system_info["system_dependencies"][tool] = {"available": False, "error": "Not found"}
+    
+    return system_info

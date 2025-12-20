@@ -1,2 +1,7 @@
 ffmpeg
 libavcodec-extra
+imagemagick
+ghostscript
+poppler-utils
+libreoffice
+pandoc
