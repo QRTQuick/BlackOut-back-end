@@ -2,7 +2,7 @@ import uuid, shutil, os
 from fastapi import APIRouter, UploadFile, BackgroundTasks, Depends
 from app.core.security import verify_api_key
 from app.services.image_converter import convert_image
-from app.services.document_converter import pdf_to_docx, txt_to_docx
+from app.services.document_converter import pdf_to_docx, txt_to_docx, docx_to_txt, docx_to_pptx
 from app.services.spreadsheet_converter import convert_spreadsheet
 from app.services.presentation_converter import convert_presentation
 from app.services.temp_manager import save_temp
@@ -52,15 +52,30 @@ async def convert_file(
             
             file_ext = file.filename.lower().split('.')[-1] if '.' in file.filename else ''
             
+            print(f"🔍 Debug: file_ext='{file_ext}', target_format='{target_format.lower()}'")
+            
             # Image conversions
             if file_ext in ["png", "jpg", "jpeg", "webp", "bmp", "tiff", "gif"]:
+                print("📸 Processing as image conversion")
                 convert_image(input_path, output_path, target_format)
             
             # Document conversions
             elif file_ext == "pdf" and target_format.lower() == "docx":
+                print("📄 Processing PDF to DOCX")
                 pdf_to_docx(input_path, output_path)
             elif file_ext == "txt" and target_format.lower() == "docx":
+                print("📝 Processing TXT to DOCX")
                 txt_to_docx(input_path, output_path)
+            elif file_ext == "txt" and target_format.lower() == "pptx":
+                print("📝 Processing TXT to PPTX")
+                from app.services.document_converter import txt_to_pptx
+                txt_to_pptx(input_path, output_path)
+            elif file_ext == "docx" and target_format.lower() == "txt":
+                print("📄 Processing DOCX to TXT")
+                docx_to_txt(input_path, output_path)
+            elif file_ext == "docx" and target_format.lower() == "pptx":
+                print("📄 Processing DOCX to PPTX")
+                docx_to_pptx(input_path, output_path)
             
             # Audio conversions
             elif file_ext in ["mp3", "wav", "ogg", "flac", "aac", "m4a", "wma"]:
@@ -138,7 +153,8 @@ def get_supported_formats():
             },
             "documents": {
                 "pdf_to": ["docx"],
-                "txt_to": ["docx"]
+                "txt_to": ["docx", "pptx"],
+                "docx_to": ["txt", "pptx"]
             },
             "spreadsheets": {
                 "input_formats": ["csv", "xlsx", "xls"],
@@ -151,6 +167,7 @@ def get_supported_formats():
         },
         "examples": {
             "image": "PNG to JPG, WEBP to PNG",
+            "document": "PDF to DOCX, TXT to PPTX, DOCX to TXT",
             "spreadsheet": "CSV to XLSX, Excel to JSON",
             "presentation": "PPTX to TXT, TXT to PPTX"
         },
@@ -178,3 +195,19 @@ def get_supported_formats():
         formats["examples"]["video_audio"] = "MP4 to MP3 (extract audio)"
     
     return formats
+
+@router.get("/test-docx")
+def test_docx_conversion():
+    """Test endpoint to verify DOCX conversion functions are working"""
+    try:
+        from app.services.document_converter import docx_to_txt, docx_to_pptx
+        return {
+            "status": "success",
+            "message": "DOCX conversion functions imported successfully",
+            "available_functions": ["docx_to_txt", "docx_to_pptx"]
+        }
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"DOCX conversion import failed: {str(e)}"
+        }

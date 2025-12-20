@@ -142,6 +142,91 @@ async def landing_page():
             border-radius: 4px;
             color: #00ff41;
         }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .status {
+                padding: 15px;
+            }
+            
+            .status-item {
+                font-size: 0.9em;
+                flex-wrap: wrap;
+            }
+            
+            .links {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .link-card {
+                padding: 15px;
+            }
+            
+            code {
+                font-size: 0.8em;
+                display: block;
+                padding: 10px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+                margin: 5px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+            
+            pre {
+                font-size: 10px;
+                overflow-x: auto;
+            }
+            
+            .status {
+                padding: 10px;
+            }
+            
+            .status-item {
+                font-size: 0.8em;
+                margin: 8px 0;
+            }
+            
+            .links {
+                gap: 8px;
+            }
+            
+            .link-card {
+                padding: 12px;
+            }
+            
+            .link-card h3 {
+                font-size: 1em;
+            }
+            
+            .link-card p {
+                font-size: 0.8em;
+            }
+        }
     </style>
 </head>
 <body>

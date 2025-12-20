@@ -337,18 +337,202 @@
         @media (max-width: 768px) {
             .terminal-container {
                 padding: 10px;
+                margin: 10px;
+            }
+            
+            .terminal-header {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+            
+            .terminal-body {
+                padding: 20px 15px;
             }
             
             .endpoint-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .ascii-art {
                 font-size: 8px;
+                overflow-x: auto;
             }
             
             .welcome-text h1 {
-                font-size: 2em;
+                font-size: 1.8em;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .endpoint-card {
+                padding: 15px;
+            }
+            
+            .code-block {
+                font-size: 0.8em;
+                overflow-x: auto;
+            }
+            
+            .code-block pre {
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+            
+            .formats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .format-category {
+                padding: 10px;
+            }
+            
+            .format-category h4 {
+                font-size: 0.9em;
+            }
+            
+            .format-list {
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .terminal-container {
+                padding: 5px;
+                margin: 5px;
+            }
+            
+            .terminal-header {
+                padding: 8px 10px;
+            }
+            
+            .terminal-buttons {
+                gap: 4px;
+            }
+            
+            .btn {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .terminal-title {
+                font-size: 0.8em;
+                margin-left: 8px;
+            }
+            
+            .terminal-body {
+                padding: 15px 10px;
+            }
+            
+            .ascii-art {
+                font-size: 6px;
+                margin-bottom: 20px;
+            }
+            
+            .welcome-text h1 {
+                font-size: 1.5em;
+                margin-bottom: 8px;
+            }
+            
+            .welcome-text p {
+                font-size: 0.9em;
+            }
+            
+            .status-bar {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            
+            .section-title {
+                font-size: 1.2em;
+                margin-bottom: 15px;
+            }
+            
+            .endpoint-card {
+                padding: 12px;
+            }
+            
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .endpoint-path {
+                font-size: 0.9em;
+                word-break: break-all;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.7em;
+            }
+            
+            .copy-btn {
+                position: static;
+                margin-top: 10px;
+                width: 100%;
+            }
+            
+            .formats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .format-category {
+                padding: 8px;
+            }
+            
+            .typing-animation {
+                animation: none;
+                border-right: none;
+                white-space: normal;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .endpoint-card {
+                padding: 20px;
+            }
+            
+            .copy-btn {
+                padding: 12px 16px;
+                font-size: 1em;
+            }
+            
+            .link-card {
+                padding: 20px;
+                min-height: 80px;
+            }
+            
+            /* Larger touch targets */
+            button, .copy-btn, .link-card {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        /* Landscape phone orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .ascii-art {
+                font-size: 7px;
+                margin-bottom: 15px;
+            }
+            
+            .welcome-text h1 {
+                font-size: 1.6em;
+            }
+            
+            .status-bar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
     </style>
@@ -573,7 +757,7 @@
                     
                     <div class="format-category">
                         <h4><i class="fas fa-file-word"></i> Documents</h4>
-                        <div class="format-list">PDF, DOCX, TXT, PPTX</div>
+                        <div class="format-list">PDF→DOCX, TXT→DOCX/PPTX, DOCX→TXT/PPTX</div>
                     </div>
                     
                     <div class="format-category">

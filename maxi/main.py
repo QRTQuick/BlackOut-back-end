@@ -129,14 +129,21 @@ class NodeBlackTester(QMainWindow):
         # Format selection
         format_layout = QHBoxLayout()
         self.format_combo = QComboBox()
-        # Add all supported formats
+        
+        # Comprehensive list of all supported formats
         formats = [
-            "png", "jpg", "jpeg", "webp", "bmp", "tiff",  # Images
-            "docx", "txt",  # Documents
-            "mp3", "wav", "ogg", "flac", "aac", "m4a",  # Audio
-            "csv", "xlsx", "xls", "json", "html",  # Spreadsheets
-            "pptx",  # Presentations
-            "mp4", "avi", "mov", "webm", "gif"  # Video
+            # Images
+            "png", "jpg", "jpeg", "webp", "bmp", "tiff", "gif",
+            # Documents  
+            "docx", "txt", "pdf",
+            # Audio
+            "mp3", "wav", "ogg", "flac", "aac", "m4a",
+            # Spreadsheets
+            "csv", "xlsx", "xls", "json", "html",
+            # Presentations
+            "pptx",
+            # Video
+            "mp4", "avi", "mov", "webm", "mkv", "flv"
         ]
         self.format_combo.addItems(formats)
         
@@ -227,6 +234,7 @@ class NodeBlackTester(QMainWindow):
             "Spreadsheets (*.csv *.xlsx *.xls);;"
             "Presentations (*.pptx);;"
             "Video (*.mp4 *.avi *.mov *.webm *.mkv *.flv);;"
+            "Archives (*.zip *.rar *.7z);;"
             "All Files (*)"
         )
         
@@ -235,6 +243,72 @@ class NodeBlackTester(QMainWindow):
             self.file_label.setText(os.path.basename(file_path))
             self.convert_btn.setEnabled(True)
             self.log(f"Selected file: {os.path.basename(file_path)}")
+            
+            # Smart format suggestions based on input file
+            self.suggest_formats(file_path)
+    
+    def suggest_formats(self, file_path):
+        """Suggest appropriate output formats based on input file type"""
+        ext = os.path.splitext(file_path)[1].lower().lstrip('.')
+        
+        # Clear current items
+        self.format_combo.clear()
+        
+        # Format suggestions based on input type
+        if ext in ['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'gif']:
+            # Image conversions
+            suggested = ['jpg', 'png', 'webp', 'bmp', 'tiff', 'gif']
+            self.format_combo.addItems([f for f in suggested if f != ext])
+            self.log(f"💡 Suggested formats for {ext.upper()}: Image conversions")
+            
+        elif ext in ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']:
+            # Audio conversions
+            suggested = ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a']
+            self.format_combo.addItems([f for f in suggested if f != ext])
+            self.log(f"🎵 Suggested formats for {ext.upper()}: Audio conversions")
+            
+        elif ext in ['mp4', 'avi', 'mov', 'webm', 'mkv', 'flv']:
+            # Video conversions + audio extraction
+            suggested = ['mp4', 'avi', 'mov', 'webm', 'gif', 'mp3', 'wav']
+            self.format_combo.addItems([f for f in suggested if f != ext])
+            self.log(f"🎬 Suggested formats for {ext.upper()}: Video + Audio extraction")
+            
+        elif ext in ['csv', 'xlsx', 'xls']:
+            # Spreadsheet conversions
+            suggested = ['csv', 'xlsx', 'xls', 'json', 'html']
+            self.format_combo.addItems([f for f in suggested if f != ext])
+            self.log(f"📊 Suggested formats for {ext.upper()}: Spreadsheet conversions")
+            
+        elif ext == 'pdf':
+            # PDF conversions
+            self.format_combo.addItems(['docx', 'txt'])
+            self.log(f"📄 Suggested formats for PDF: Document conversions")
+            
+        elif ext == 'txt':
+            # Text conversions
+            self.format_combo.addItems(['docx', 'pptx'])
+            self.log(f"📝 Suggested formats for TXT: Document conversions")
+            
+        elif ext == 'docx':
+            # DOCX conversions
+            self.format_combo.addItems(['txt', 'pptx'])
+            self.log(f"📄 Suggested formats for DOCX: Text and Presentation conversions")
+            
+        elif ext == 'pptx':
+            # Presentation conversions
+            self.format_combo.addItems(['txt', 'json'])
+            self.log(f"📽️ Suggested formats for PPTX: Text extraction")
+            
+        else:
+            # Unknown format - show all options
+            all_formats = [
+                "png", "jpg", "jpeg", "webp", "bmp", "tiff", "gif",
+                "docx", "txt", "pdf", "mp3", "wav", "ogg", "flac", 
+                "aac", "m4a", "csv", "xlsx", "xls", "json", "html",
+                "pptx", "mp4", "avi", "mov", "webm", "mkv", "flv"
+            ]
+            self.format_combo.addItems(all_formats)
+            self.log(f"❓ Unknown format {ext.upper()}: Showing all options")
     
     def convert_file(self):
         if not hasattr(self, 'selected_file'):
